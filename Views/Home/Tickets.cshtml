@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Tickets";
+    var tickets = await FootballProgrammeService.GetAllTickets();
+}
+
+<div class="row mt-4">
+    <div class=col-12>
+        <h3>Programs</h3>
+        <table class="table table-striped" id="datatable">
+            <thead>
+                <tr>
+                    <th>Home Team</th>
+                    <th>Away Team</th>
+                    <th>Year</th>
+                    <th>Competition</th>
+                    <th>Country</th>
+                    <th>Quality</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in tickets)
+                {
+                    <tr>
+                        <td>@item.HomeClub.Name</td>
+                        <td>@item.AwayClub.Name</td>
+                        <td>@item.Year</td>
+                        <td>@item.CompetitionType</td>
+                        <td>@item.Country</td>
+                        <td>@item.Quality</td>
+                        <td>@item.Description</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

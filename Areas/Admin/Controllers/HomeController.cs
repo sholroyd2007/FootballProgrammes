@@ -1,8 +1,13 @@
 ﻿using ClosedXML.Excel;
+using CsvHelper;
 using FootballProgrammes.Data;
+using FootballProgrammes.Models;
 using FootballProgrammes.Services;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -129,5 +134,56 @@ namespace FootballProgrammes.Areas.Admin.Controllers
             }
         }
 
+
+        public async Task<IActionResult> ImportClubs(IFormFile file, [FromServices] IHostingEnvironment hostingEnvironment)
+        {
+            if (file != null)
+            {
+                string fileName = $"{hostingEnvironment.WebRootPath}\\files\\{file.FileName}";
+                using (FileStream fileStream = System.IO.File.Create(fileName))
+                {
+                    file.CopyTo(fileStream);
+                    fileStream.Flush();
+                }
+
+                using (var reader = new StreamReader(fileName))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    csv.Read();
+                    csv.ReadHeader();
+                    while (csv.Read())
+                    {
+                        var homeTeam = csv.GetRecord<HomeClub>();
+                        var awayTeam = csv.GetRecord<AwayClub>();
+                        DatabaseContext.HomeClubs.Add(homeTeam);
+                        DatabaseContext.AwayClubs.Add(awayTeam);
+                        await DatabaseContext.SaveChangesAsync();
+                    }
+                }
+
+                System.IO.File.Delete(fileName);
+
+            }
+            return RedirectToAction(nameof(Index), new { Controller = "Home", Area = ""});
+        }
+
+        public async Task<IActionResult> DeleteClubs()
+        {
+            var homeclubs = await FootballProgrammeService.GetAllHomeClubs();
+            var awayClubs = await FootballProgrammeService.GetAllAwayClubs();
+            foreach (var item in homeclubs)
+            {
+                DatabaseContext.HomeClubs.Remove(item);
+                await DatabaseContext.SaveChangesAsync();
+            }
+
+            foreach (var item in awayClubs)
+            {
+                DatabaseContext.AwayClubs.Remove(item);
+                await DatabaseContext.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index), new { Area = "Admin", Controller = "Home" });
+        }
     }
 }

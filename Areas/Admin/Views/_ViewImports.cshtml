@@ -1,7 +1,10 @@
 ﻿@using FootballProgrammes
+@using FootballProgrammes.Data
 @using FootballProgrammes.Models
 @using FootballProgrammes.Services
+@using Microsoft.EntityFrameworkCore
 
 @inject IFootballProgrammeService FootballProgrammeService
+@inject ApplicationDbContext DatabaseContext
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

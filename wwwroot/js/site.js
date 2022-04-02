@@ -5,4 +5,10 @@
 
 $(document).ready(function () {
     $('#datatable').DataTable();
+    $('#homeTeamTicket').select2();
+    $('#awayTeamTicket').select2();
+    $('#countryTicket').select2();
+    $('#homeTeamProgramme').select2();
+    $('#awayTeamProgramme').select2();
+    $('#countryProgramme').select2();
 });

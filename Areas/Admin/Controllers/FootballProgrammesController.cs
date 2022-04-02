@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FootballProgrammes.Data;
 using FootballProgrammes.Models;
+using FootballProgrammes.Services;
 
 namespace FootballProgrammes.Areas.Admin.Controllers
 {
@@ -15,16 +16,19 @@ namespace FootballProgrammes.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public FootballProgrammesController(ApplicationDbContext context)
+        public IFootballProgrammeService FootballProgrammeService { get; }
+
+        public FootballProgrammesController(ApplicationDbContext context,
+            IFootballProgrammeService footballProgrammeService)
         {
             _context = context;
+            FootballProgrammeService = footballProgrammeService;
         }
 
         // GET: Admin/FootballProgrammes
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.FootballProgrammes.Include(f => f.AwayClub).Include(f => f.HomeClub);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await FootballProgrammeService.GetAllFootballProgrammes());
         }
 
         // GET: Admin/FootballProgrammes/Details/5
@@ -35,10 +39,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var footballProgramme = await _context.FootballProgrammes
-                .Include(f => f.AwayClub)
-                .Include(f => f.HomeClub)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var footballProgramme = await FootballProgrammeService.GetFootballProgrammeById(id.Value);
             if (footballProgramme == null)
             {
                 return NotFound();
@@ -49,9 +50,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
 
         // GET: Admin/FootballProgrammes/Create
         public IActionResult Create()
-        {
-            ViewData["AwayClubId"] = new SelectList(_context.AwayClubs, "Id", "Id");
-            ViewData["HomeClubId"] = new SelectList(_context.HomeClubs, "Id", "Id");
+        {            
             return View();
         }
 
@@ -66,10 +65,8 @@ namespace FootballProgrammes.Areas.Admin.Controllers
             {
                 _context.Add(footballProgramme);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index), new { Area = "Admin", Controller = "Home" });
+                return RedirectToAction(nameof(Index), new { Area = "", Controller = "Home" });
             }
-            ViewData["AwayClubId"] = new SelectList(_context.AwayClubs, "Id", "Id", footballProgramme.AwayClubId);
-            ViewData["HomeClubId"] = new SelectList(_context.HomeClubs, "Id", "Id", footballProgramme.HomeClubId);
             return View(footballProgramme);
         }
 
@@ -81,13 +78,12 @@ namespace FootballProgrammes.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var footballProgramme = await _context.FootballProgrammes.FindAsync(id);
+            var footballProgramme = await FootballProgrammeService.GetFootballProgrammeById(id.Value);
             if (footballProgramme == null)
             {
                 return NotFound();
             }
-            ViewData["AwayClubId"] = new SelectList(_context.AwayClubs, "Id", "Id", footballProgramme.AwayClubId);
-            ViewData["HomeClubId"] = new SelectList(_context.HomeClubs, "Id", "Id", footballProgramme.HomeClubId);
+            
             return View(footballProgramme);
         }
 
@@ -96,7 +92,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("HomeClubId,AwayClubId,Year,Country,CompetitionType,Quality,Id,Name,Description")] FootballProgramme footballProgramme)
+        public async Task<IActionResult> Edit(int id, FootballProgramme footballProgramme)
         {
             if (id != footballProgramme.Id)
             {
@@ -123,8 +119,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AwayClubId"] = new SelectList(_context.AwayClubs, "Id", "Id", footballProgramme.AwayClubId);
-            ViewData["HomeClubId"] = new SelectList(_context.HomeClubs, "Id", "Id", footballProgramme.HomeClubId);
+            
             return View(footballProgramme);
         }
 
@@ -136,10 +131,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var footballProgramme = await _context.FootballProgrammes
-                .Include(f => f.AwayClub)
-                .Include(f => f.HomeClub)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var footballProgramme = await FootballProgrammeService.GetFootballProgrammeById(id.Value);
             if (footballProgramme == null)
             {
                 return NotFound();
@@ -153,7 +145,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var footballProgramme = await _context.FootballProgrammes.FindAsync(id);
+            var footballProgramme = await FootballProgrammeService.GetFootballProgrammeById(id);
             _context.FootballProgrammes.Remove(footballProgramme);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

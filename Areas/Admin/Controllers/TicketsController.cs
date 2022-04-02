@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FootballProgrammes.Data;
 using FootballProgrammes.Models;
+using FootballProgrammes.Services;
 
 namespace FootballProgrammes.Areas.Admin.Controllers
 {
@@ -15,16 +16,19 @@ namespace FootballProgrammes.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public TicketsController(ApplicationDbContext context)
+        public IFootballProgrammeService FootballProgrammeService { get; }
+
+        public TicketsController(ApplicationDbContext context,
+            IFootballProgrammeService footballProgrammeService)
         {
             _context = context;
+            FootballProgrammeService = footballProgrammeService;
         }
 
         // GET: Admin/Tickets
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Tickets.Include(t => t.AwayClub).Include(t => t.HomeClub);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await FootballProgrammeService.GetAllTickets());
         }
 
         // GET: Admin/Tickets/Details/5
@@ -35,10 +39,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets
-                .Include(t => t.AwayClub)
-                .Include(t => t.HomeClub)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var ticket = await FootballProgrammeService.GetTicketById(id.Value);
             if (ticket == null)
             {
                 return NotFound();
@@ -50,8 +51,6 @@ namespace FootballProgrammes.Areas.Admin.Controllers
         // GET: Admin/Tickets/Create
         public IActionResult Create()
         {
-            ViewData["AwayClubId"] = new SelectList(_context.AwayClubs, "Id", "Id");
-            ViewData["HomeClubId"] = new SelectList(_context.HomeClubs, "Id", "Id");
             return View();
         }
 
@@ -60,16 +59,15 @@ namespace FootballProgrammes.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("HomeClubId,AwayClubId,Year,Country,CompetitionType,Quality,Id,Name,Description")] Ticket ticket)
+        public async Task<IActionResult> Create(Ticket ticket)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index), new { Area = "Admin", Controller = "Home" });
+                return RedirectToAction(nameof(Index), new { Area = "", Controller = "Home" });
             }
-            ViewData["AwayClubId"] = new SelectList(_context.AwayClubs, "Id", "Id", ticket.AwayClubId);
-            ViewData["HomeClubId"] = new SelectList(_context.HomeClubs, "Id", "Id", ticket.HomeClubId);
+           
             return View(ticket);
         }
 
@@ -81,13 +79,12 @@ namespace FootballProgrammes.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets.FindAsync(id);
+            var ticket = await FootballProgrammeService.GetTicketById(id.Value);
             if (ticket == null)
             {
                 return NotFound();
             }
-            ViewData["AwayClubId"] = new SelectList(_context.AwayClubs, "Id", "Id", ticket.AwayClubId);
-            ViewData["HomeClubId"] = new SelectList(_context.HomeClubs, "Id", "Id", ticket.HomeClubId);
+            
             return View(ticket);
         }
 
@@ -96,7 +93,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("HomeClubId,AwayClubId,Year,Country,CompetitionType,Quality,Id,Name,Description")] Ticket ticket)
+        public async Task<IActionResult> Edit(int id, Ticket ticket)
         {
             if (id != ticket.Id)
             {
@@ -123,8 +120,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AwayClubId"] = new SelectList(_context.AwayClubs, "Id", "Id", ticket.AwayClubId);
-            ViewData["HomeClubId"] = new SelectList(_context.HomeClubs, "Id", "Id", ticket.HomeClubId);
+            
             return View(ticket);
         }
 
@@ -136,10 +132,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets
-                .Include(t => t.AwayClub)
-                .Include(t => t.HomeClub)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var ticket = await FootballProgrammeService.GetTicketById(id.Value);
             if (ticket == null)
             {
                 return NotFound();
@@ -153,7 +146,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var ticket = await _context.Tickets.FindAsync(id);
+            var ticket = await FootballProgrammeService.GetTicketById(id);
             _context.Tickets.Remove(ticket);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

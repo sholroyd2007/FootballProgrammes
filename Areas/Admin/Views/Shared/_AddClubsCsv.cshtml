@@ -1,26 +1,21 @@
-﻿@model Book
-
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary col p-3 m-2" data-toggle="modal" data-target="#addBookModal">
-  <h4>Add Book</h4>
+﻿<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addClubsCsvModal">
+  Add Clubs CSV
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="addBookModal" tabindex="-1" role="dialog" aria-labelledby="addBookModalLabel" aria-hidden="true">
+<div class="modal fade" id="addClubsCsvModal" tabindex="-1" role="dialog" aria-labelledby="addClubsCsvModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addBookModalLabel">Add Book</h5>
+        <h5 class="modal-title" id="addClubsCsvModalLabel">Add Clubs CSV</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <form asp-action="Create" asp-area="Admin" asp-controller="Books">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
-            @Html.EditorForModel()
-
+        <form asp-action="ImportClubs" asp-area="Admin" asp-controller="Home"  method="post" enctype="multipart/form-data">
+            <input class="form-control-file" type="file" name="file" />
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

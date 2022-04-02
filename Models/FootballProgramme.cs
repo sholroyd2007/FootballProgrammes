@@ -17,5 +17,7 @@
         public CompetitionType CompetitionType { get; set; }
 
         public Quality Quality { get; set; }
+
+        public bool Womens { get; set; }
     }
 }

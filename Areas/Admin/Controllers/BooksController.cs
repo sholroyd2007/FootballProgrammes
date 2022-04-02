@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FootballProgrammes.Data;
 using FootballProgrammes.Models;
+using FootballProgrammes.Services;
 
 namespace FootballProgrammes.Areas.Admin.Controllers
 {
@@ -15,15 +16,19 @@ namespace FootballProgrammes.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public BooksController(ApplicationDbContext context)
+        public IFootballProgrammeService FootballProgrammeService { get; }
+
+        public BooksController(ApplicationDbContext context,
+            IFootballProgrammeService footballProgrammeService)
         {
             _context = context;
+            FootballProgrammeService = footballProgrammeService;
         }
 
         // GET: Admin/Books
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Books.ToListAsync());
+            return View(await FootballProgrammeService.GetAllBooks());
         }
 
         // GET: Admin/Books/Details/5
@@ -34,8 +39,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var book = await _context.Books
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var book = await FootballProgrammeService.GetBookById(id.Value);
             if (book == null)
             {
                 return NotFound();
@@ -55,13 +59,13 @@ namespace FootballProgrammes.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Author,Id,Name,Description")] Book book)
+        public async Task<IActionResult> Create(Book book)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(book);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index), new { Area = "Admin", Controller = "Home" });
+                return RedirectToAction(nameof(Index), new { Area = "", Controller = "Home" });
             }
             return View(book);
         }
@@ -74,7 +78,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var book = await _context.Books.FindAsync(id);
+            var book = await FootballProgrammeService.GetBookById(id.Value);
             if (book == null)
             {
                 return NotFound();
@@ -87,7 +91,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Author,Id,Name,Description")] Book book)
+        public async Task<IActionResult> Edit(int id, Book book)
         {
             if (id != book.Id)
             {
@@ -125,8 +129,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var book = await _context.Books
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var book = await FootballProgrammeService.GetBookById(id.Value);
             if (book == null)
             {
                 return NotFound();
@@ -140,7 +143,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var book = await _context.Books.FindAsync(id);
+            var book = await FootballProgrammeService.GetBookById(id);
             _context.Books.Remove(book);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

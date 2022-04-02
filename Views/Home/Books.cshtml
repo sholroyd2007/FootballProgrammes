@@ -1,0 +1,27 @@
+﻿@{
+    ViewData["Title"] = "Books";
+    var books = await FootballProgrammeService.GetAllBooks();
+}
+
+<div class="row mt-4">
+    <div class=col-12>
+        <h3>Programs</h3>
+        <table class="table table-striped" id="datatable">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in books)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Author</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

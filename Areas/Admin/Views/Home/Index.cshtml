@@ -1,7 +1,17 @@
 ﻿@{
     ViewData["Title"] = "Admin Home Page";
+    var homeClubs = await DatabaseContext.HomeClubs.AsNoTracking().ToListAsync();
+    var awayClubs = await DatabaseContext.AwayClubs.AsNoTracking().ToListAsync();
 }
 
+<div class="row">
+    <partial name="_AddClubsCsv" />
+    <a asp-action="DeleteClubs" asp-area="Admin" asp-Controller="Home" class="btn btn-danger ml-2">Delete All Clubs</a>
+</div>
 
-
-
+<div class="row">
+    <div class="col">
+        <h4>Home Club Count: @homeClubs.Count()</h4>
+    <h4>Away Club Count: @awayClubs.Count()</h4>
+    </div>
+</div>

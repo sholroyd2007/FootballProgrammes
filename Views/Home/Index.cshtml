@@ -1,59 +1,65 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
     var programmes = await FootballProgrammeService.GetAllFootballProgrammes();
+    var tickets = await FootballProgrammeService.GetAllTickets();
+    var books = await FootballProgrammeService.GetAllBooks();
 }
 
 <div class="container">
     <div class="row mt-3">
         <div class="col-12">
-            <h3>Add Items</h3>
-            <partial name="_AddClubFE" />
-            <partial name="_AddBookFE" />
-            <partial name="_AddTicketFE" />
-            <partial name="_AddFootballProgrammeFE" />
+            <div class="row" style="height:150px;">
+                <partial name="_AddFootballProgrammeFE" />
+                <partial name="_AddTicketFE" />
+                <partial name="_AddBookFE" />
+            </div>
         </div>
     </div>
-    <div class="row mt-2">
+    <div class="row mt-3">
+        <div class="col">
+            <div class="row" style="height:150px;">
+                <div class="col m-2 bg-success p-3 d-flex justify-content-center">
+                    <a asp-Controller="Home" asp-action="Programmes" class="btn text-white align-self-center stretched-link"><h3>Programmes: @programmes.Count()</h3></a>
+                </div>
+                <div class="col m-2 bg-success p-3 d-flex justify-content-center">
+                    <a asp-Controller="Home" asp-action="Tickets" class="btn text-white align-self-center stretched-link"><h3>Tickets: @tickets.Count()</h3></a>
+                </div>
+                <div class="col m-2 bg-success p-3 d-flex justify-content-center">
+                    <a asp-Controller="Home" asp-action="Books" class="btn text-white align-self-center stretched-link"><h3>Books: @books.Count()</h3></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
         <div class="col-12">
-            <h3>Downloads</h3>
-            <a asp-Controller="Home" asp-area="Admin" asp-action="ExportProgrammesToCSV" class="btn btn-success">Export Programs (CSV)</a>
-            <a asp-Controller="Home" asp-area="Admin" asp-action="ExportBooksToCSV" class="btn btn-success">Export Books (CSV)</a>
-            <a asp-Controller="Home" asp-area="Admin" asp-action="ExportTicketsToCSV" class="btn btn-success">Export Tickets (CSV)</a>
-            <a asp-Controller="Home" asp-area="Admin" asp-action="ExportAllToExcel" class="btn btn-secondary">Export All (Xlsx)</a>
+            <div class="row" style="height:150px;">
+                <div class="col m-2 bg-warning p-3 d-flex justify-content-center">
+                    <a asp-Controller="Home" asp-area="Admin" asp-action="ExportProgrammesToCSV"
+                   class="btn text-white align-self-center stretched-link"><h4>Export Programs<br /><small>(CSV)</small></h4></a>
+                </div>
+                <div class="col m-2 bg-warning p-3 d-flex justify-content-center">
+                    <a asp-Controller="Home" asp-area="Admin" asp-action="ExportBooksToCSV"
+                   class="btn text-white align-self-center stretched-link"><h4>Export Books<br /><small>(CSV)</small></h4></a>
+                </div>
+                <div class="col m-2 bg-warning p-3 d-flex justify-content-center">
+                    <a asp-Controller="Home" asp-area="Admin" asp-action="ExportTicketsToCSV"
+                   class="btn text-white align-self-center stretched-link"><h4>Export Tickets<br /><small>(CSV)</small></h4></a>
+                </div>
+                <div class="col m-2 bg-info p-3 d-flex justify-content-center">
+                    <a asp-Controller="Home" asp-area="Admin" asp-action="ExportAllToExcel"
+                   class="btn text-white align-self-center stretched-link"><h4>Export All<br /><small>(XlSX)</small></h4></a>
+                </div>
+            </div>
         </div>
     </div>
 
-
-    <div class="row mt-4">
-        <div class=col-12>
-            <h3>Programs</h3>
-            <table class="table table-striped" id="datatable">
-                <thead>
-                    <tr>
-                        <th>Home Team</th>
-                        <th>Away Team</th>
-                        <th>Year</th>
-                        <th>Competition</th>
-                        <th>Country</th>
-                        <th>Quality</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in programmes)
-                    {
-                        <tr>
-                            <td>@item.HomeClub.Name</td>
-                            <td>@item.AwayClub.Name</td>
-                            <td>@item.Year</td>
-                            <td>@item.CompetitionType</td>
-                            <td>@item.Country</td>
-                            <td>@item.Quality</td>
-                            <td>@item.Description</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="row" style="height:100px;">
+                <partial name="_AddClubFE" />
+                <partial name="_AddClubsCsvFE" />
+            </div>
         </div>
     </div>
 </div>

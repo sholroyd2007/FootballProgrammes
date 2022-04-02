@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FootballProgrammes.Data;
 using FootballProgrammes.Models;
+using FootballProgrammes.Services;
 
 namespace FootballProgrammes.Areas.Admin.Controllers
 {
@@ -15,15 +16,19 @@ namespace FootballProgrammes.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public AwayClubsController(ApplicationDbContext context)
+        public IFootballProgrammeService FootballProgrammeService { get; }
+
+        public AwayClubsController(ApplicationDbContext context,
+            IFootballProgrammeService footballProgrammeService)
         {
             _context = context;
+            FootballProgrammeService = footballProgrammeService;
         }
 
         // GET: Admin/AwayClubs
         public async Task<IActionResult> Index()
         {
-            return View(await _context.AwayClubs.ToListAsync());
+            return View(await FootballProgrammeService.GetAllAwayClubs());
         }
 
         // GET: Admin/AwayClubs/Details/5
@@ -34,8 +39,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var awayClub = await _context.AwayClubs
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var awayClub = await FootballProgrammeService.GetAwayClubById(id.Value);
             if (awayClub == null)
             {
                 return NotFound();
@@ -55,7 +59,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("International,Id,Name,Description")] AwayClub awayClub)
+        public async Task<IActionResult> Create(AwayClub awayClub)
         {
             if (ModelState.IsValid)
             {
@@ -74,7 +78,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var awayClub = await _context.AwayClubs.FindAsync(id);
+            var awayClub = await FootballProgrammeService.GetAwayClubById(id.Value);
             if (awayClub == null)
             {
                 return NotFound();
@@ -87,7 +91,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("International,Id,Name,Description")] AwayClub awayClub)
+        public async Task<IActionResult> Edit(int id, AwayClub awayClub)
         {
             if (id != awayClub.Id)
             {
@@ -125,8 +129,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var awayClub = await _context.AwayClubs
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var awayClub = await FootballProgrammeService.GetAwayClubById(id.Value);
             if (awayClub == null)
             {
                 return NotFound();
@@ -140,7 +143,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var awayClub = await _context.AwayClubs.FindAsync(id);
+            var awayClub = await FootballProgrammeService.GetAwayClubById(id);
             _context.AwayClubs.Remove(awayClub);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

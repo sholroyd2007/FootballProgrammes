@@ -74,7 +74,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
                 _context.AwayClubs.Add(awayClub);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index), new { Area = "Admin", Controller = "Home"});
+                return RedirectToAction(nameof(Index), new { Area = "", Controller = "Home"});
             }
             return View(homeClub);
         }
@@ -100,7 +100,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("International,Id,Name,Description")] HomeClub homeClub)
+        public async Task<IActionResult> Edit(int id, HomeClub homeClub)
         {
             if (id != homeClub.Id)
             {
