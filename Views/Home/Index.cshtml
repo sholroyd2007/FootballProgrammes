@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    var programmes = await FootballProgrammeService.GetAllFootballProgrammes();
+}
+
+<div class="container">
+    <div class="row mt-3">
+        <div class="col-12">
+            <h3>Add Items</h3>
+            <partial name="_AddClubFE" />
+            <partial name="_AddBookFE" />
+            <partial name="_AddTicketFE" />
+            <partial name="_AddFootballProgrammeFE" />
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-12">
+            <h3>Downloads</h3>
+            <a asp-Controller="Home" asp-area="Admin" asp-action="ExportProgrammesToCSV" class="btn btn-success">Export Programs (CSV)</a>
+            <a asp-Controller="Home" asp-area="Admin" asp-action="ExportBooksToCSV" class="btn btn-success">Export Books (CSV)</a>
+            <a asp-Controller="Home" asp-area="Admin" asp-action="ExportTicketsToCSV" class="btn btn-success">Export Tickets (CSV)</a>
+            <a asp-Controller="Home" asp-area="Admin" asp-action="ExportAllToExcel" class="btn btn-secondary">Export All (Xlsx)</a>
+        </div>
+    </div>
+
+
+    <div class="row mt-4">
+        <div class=col-12>
+            <h3>Programs</h3>
+            <table class="table table-striped" id="datatable">
+                <thead>
+                    <tr>
+                        <th>Home Team</th>
+                        <th>Away Team</th>
+                        <th>Year</th>
+                        <th>Competition</th>
+                        <th>Country</th>
+                        <th>Quality</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in programmes)
+                    {
+                        <tr>
+                            <td>@item.HomeClub.Name</td>
+                            <td>@item.AwayClub.Name</td>
+                            <td>@item.Year</td>
+                            <td>@item.CompetitionType</td>
+                            <td>@item.Country</td>
+                            <td>@item.Quality</td>
+                            <td>@item.Description</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

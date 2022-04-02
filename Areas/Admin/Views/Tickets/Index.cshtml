@@ -1,0 +1,52 @@
+﻿@model IEnumerable<FootballProgrammes.Models.Ticket>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<div class="container">
+    <div class="row">
+        <div class=col-12>
+            <table class="table table-striped" id="datatable">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Home Team</th>
+                        <th>Away Team</th>
+                        <th>Year</th>
+                        <th>Competition</th>
+                        <th>Country</th>
+                        <th>Quality</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.HomeClub.Name</td>
+                            <td>@item.AwayClub.Name</td>
+                            <td>@item.Year</td>
+                            <td>@item.CompetitionType</td>
+                            <td>@item.Country</td>
+                            <td>@item.Quality</td>
+                            <td>@item.Description</td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
