@@ -8,10 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using FootballProgrammes.Data;
 using FootballProgrammes.Models;
 using FootballProgrammes.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FootballProgrammes.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;

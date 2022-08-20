@@ -1,34 +1,47 @@
 ﻿@model Book
+@using Microsoft.AspNet.Identity
+@{
+    var userId = User.Identity.GetUserId();
+}
 
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary col p-3 m-2" data-toggle="modal" data-target="#addBookModal">
-  <h4>Add Book</h4>
+    <h4>Add Book</h4>
 </button>
 
 <!-- Modal -->
 <div class="modal fade" id="addBookModal" tabindex="-1" role="dialog" aria-labelledby="addBookModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addBookModalLabel">Add Book</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form asp-action="Create" asp-area="Admin" asp-controller="Books">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
-            @Html.EditorForModel()
-
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBookModalLabel">Add Book</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
+            <div class="modal-body">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <form asp-action="CreateBook" asp-area="" asp-controller="Home">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" value="@userId" asp-for="UserId" />
+
+                        @Html.EditorForModel()
+
+                        <div class="form-group">
+                            <input type="submit" value="Create" class="btn btn-primary" />
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <p>Please <a asp-area="Identity" asp-page="/Account/Login">Log In</a> or <a asp-area="Identity" asp-page="/Account/Register">Register</a> to add a new book.</p>
+                }
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>

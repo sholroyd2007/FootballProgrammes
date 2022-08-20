@@ -3,6 +3,7 @@ using CsvHelper;
 using FootballProgrammes.Data;
 using FootballProgrammes.Models;
 using FootballProgrammes.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ using System.Threading.Tasks;
 namespace FootballProgrammes.Areas.Admin.Controllers
 {
     [Area(nameof(Admin))]
+    [Authorize(Roles = "Admin")]
     public class HomeController : Controller
     {
         public HomeController(ApplicationDbContext databaseContext,

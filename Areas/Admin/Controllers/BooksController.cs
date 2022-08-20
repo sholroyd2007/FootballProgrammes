@@ -8,10 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using FootballProgrammes.Data;
 using FootballProgrammes.Models;
 using FootballProgrammes.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FootballProgrammes.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class BooksController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -63,6 +65,7 @@ namespace FootballProgrammes.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                book.DateAdded = DateTime.UtcNow.ToLocalTime();
                 _context.Add(book);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index), new { Area = "", Controller = "Home" });

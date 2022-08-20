@@ -1,4 +1,6 @@
-﻿namespace FootballProgrammes.Models
+﻿using System;
+
+namespace FootballProgrammes.Models
 {
     public class Ticket : Entity
     {
@@ -19,5 +21,17 @@
         public Quality Quality { get; set; }
 
         public bool Womens { get; set; }
+
+        public string UserId { get; set; }
+
+        public bool ForSale { get; set; }
+
+        public bool Sold { get; set; }
+
+        public decimal? Price { get; set; }
+
+        public DateTime DateAdded { get; set; }
+
+        public DateTime? DateSold { get; set; }
     }
 }

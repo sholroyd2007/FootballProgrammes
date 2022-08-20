@@ -1,6 +1,7 @@
 ﻿using FootballProgrammes.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,6 +18,9 @@ namespace FootballProgrammes.Data
         public DbSet<AwayClub> AwayClubs { get; set; }
         public DbSet<HomeClub> HomeClubs { get; set; }
         public DbSet<FootballProgramme> FootballProgrammes { get; set; }
-        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }        
     }
+    
 }
+
+

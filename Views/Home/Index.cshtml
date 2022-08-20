@@ -1,8 +1,11 @@
-﻿@{
+﻿@using Microsoft.AspNet.Identity
+
+@{
     ViewData["Title"] = "Home Page";
-    var programmes = await FootballProgrammeService.GetAllFootballProgrammes();
-    var tickets = await FootballProgrammeService.GetAllTickets();
-    var books = await FootballProgrammeService.GetAllBooks();
+    var userId = User.Identity.GetUserId();
+    var programmes = await FootballProgrammeService.GetFootballProgrammesByUserId(userId);
+    var tickets = await FootballProgrammeService.GetTicketsByUserId(userId);
+    var books = await FootballProgrammeService.GetBooksByUserId(userId);
 }
 
 <div class="container">
@@ -31,36 +34,43 @@
         </div>
     </div>
 
-    <div class="row mt-3">
-        <div class="col-12">
-            <div class="row" style="height:150px;">
-                <div class="col m-2 bg-warning p-3 d-flex justify-content-center">
-                    <a asp-Controller="Home" asp-area="Admin" asp-action="ExportProgrammesToCSV"
-                   class="btn text-white align-self-center stretched-link"><h4>Export Programs<br /><small>(CSV)</small></h4></a>
-                </div>
-                <div class="col m-2 bg-warning p-3 d-flex justify-content-center">
-                    <a asp-Controller="Home" asp-area="Admin" asp-action="ExportBooksToCSV"
-                   class="btn text-white align-self-center stretched-link"><h4>Export Books<br /><small>(CSV)</small></h4></a>
-                </div>
-                <div class="col m-2 bg-warning p-3 d-flex justify-content-center">
-                    <a asp-Controller="Home" asp-area="Admin" asp-action="ExportTicketsToCSV"
-                   class="btn text-white align-self-center stretched-link"><h4>Export Tickets<br /><small>(CSV)</small></h4></a>
-                </div>
-                <div class="col m-2 bg-info p-3 d-flex justify-content-center">
-                    <a asp-Controller="Home" asp-area="Admin" asp-action="ExportAllToExcel"
-                   class="btn text-white align-self-center stretched-link"><h4>Export All<br /><small>(XLSX)</small></h4></a>
-                </div>
-            </div>
-        </div>
-    </div>
+    @if (userId != null)
+    {
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="row" style="height:150px;">
+                    <div class="col m-2 bg-warning p-3 d-flex justify-content-center">
+                        <a asp-Controller="Home" asp-area="Home" asp-action="ExportUserProgrammesToCSV"
+                       class="btn text-white align-self-center stretched-link"><h4>Download Programmes<br /><small>(CSV)</small></h4></a>
 
-    <div class="row mt-3">
-        <div class="col-12">
-            <div class="row" style="height:100px;">
-                <partial name="_AddClubFE" />
-                <partial name="_AddClubsCsvFE" />
+                    </div>
+                    <div class="col m-2 bg-warning p-3 d-flex justify-content-center">
+                        <a asp-Controller="Home" asp-area="Home" asp-action="ExportUserBooksToCSV"
+                       class="btn text-white align-self-center stretched-link"><h4>Download Books<br /><small>(CSV)</small></h4></a>
+                    </div>
+                    <div class="col m-2 bg-warning p-3 d-flex justify-content-center">
+                        <a asp-Controller="Home" asp-area="Home" asp-action="ExportUserTicketsToCSV"
+                       class="btn text-white align-self-center stretched-link"><h4>Download Tickets<br /><small>(CSV)</small></h4></a>
+                    </div>
+                    <div class="col m-2 bg-info p-3 d-flex justify-content-center">
+                        <a asp-Controller="Home" asp-area="Home" asp-action="ExportUserCollectionToExcel"
+                       class="btn text-white align-self-center stretched-link"><h4>Download Colection<br /><small>(XLSX)</small></h4></a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    }
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="row" style="height:100px;">
+                    <partial name="_AddClubFE" />
+                    <partial name="_AddClubsCsvFE" />
+                </div>
+            </div>
+        </div>
+    }
+
 </div>
 

@@ -1,6 +1,6 @@
-﻿@{
+﻿@model IEnumerable<Ticket>
+@{
     ViewData["Title"] = "Tickets";
-    var tickets = await FootballProgrammeService.GetAllTickets();
 }
 
 <div class="row mt-4">
@@ -19,7 +19,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in tickets)
+                @foreach (var item in Model)
                 {
                     <tr>
                         <td>@item.HomeClub.Name</td>
