@@ -19,6 +19,8 @@ namespace FootballProgrammes.Data
         public DbSet<HomeClub> HomeClubs { get; set; }
         public DbSet<FootballProgramme> FootballProgrammes { get; set; }
         public DbSet<Ticket> Tickets { get; set; }        
+        public DbSet<MediaFile> MediaFiles { get; set; }        
+        public DbSet<Message> Messages { get; set; }        
     }
     
 }

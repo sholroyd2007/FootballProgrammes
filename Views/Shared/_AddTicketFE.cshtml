@@ -22,7 +22,7 @@
             <div class="modal-body">
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <form asp-action="CreateTicket" asp-area="" asp-controller="Home">
+                    <form asp-action="CreateTicket" asp-area="" asp-controller="Home"  enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <input type="hidden" value="@userId" asp-for="UserId" />
 

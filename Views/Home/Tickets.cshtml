@@ -5,7 +5,7 @@
 
 <div class="row mt-4">
     <div class=col-12>
-        <h3>Programs</h3>
+        <h3>Tickets</h3>
         <table class="table table-striped" id="datatable">
             <thead>
                 <tr>
@@ -16,6 +16,7 @@
                     <th>Country</th>
                     <th>Quality</th>
                     <th>Description</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,6 +30,10 @@
                         <td>@item.Country</td>
                         <td>@item.Quality</td>
                         <td>@item.Description</td>
+                        <td>
+                            <a asp-action="TicketDetails" asp-route-id="@item.Id">Details</a> |
+                            <a asp-action="DeleteTicket" asp-route-id="@item.Id">Delete</a>
+                        </td>
                     </tr>
                 }
             </tbody>

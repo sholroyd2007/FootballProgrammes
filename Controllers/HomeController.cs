@@ -73,6 +73,20 @@ namespace FootballProgrammes.Controllers
             if (ModelState.IsValid)
             {
                 var newBook = await FootballProgrammeService.AddBook(book);
+
+                var file = HttpContext.Request.Form.Files.FirstOrDefault();
+                if (file != null)
+                {
+                    var mediaFile = new MediaFile();
+                    mediaFile.Data = file.OpenReadStream().ReadFully();
+                    mediaFile.ContentType = file.ContentType;
+                    mediaFile.DateAdded = DateTime.Now.ToLocalTime();
+                    mediaFile.BookId = newBook.Id;
+
+                    DatabaseContext.Add(mediaFile);
+                    await DatabaseContext.SaveChangesAsync();
+                }
+
                 return RedirectToAction(nameof(Index), new { Area = "", Controller = "Home" });
             }
             return View(book);
@@ -86,6 +100,24 @@ namespace FootballProgrammes.Controllers
             if (ModelState.IsValid)
             {
                 var newFootballProgramme = await FootballProgrammeService.AddFootballProgramme(footballProgramme);
+
+                var files = HttpContext.Request.Form.Files.ToList();
+                if (files != null)
+                {
+                    foreach (var file in files)
+                    {
+                        var mediaFile = new MediaFile();
+                        mediaFile.Data = file.OpenReadStream().ReadFully();
+                        mediaFile.ContentType = file.ContentType;
+                        mediaFile.DateAdded = DateTime.Now.ToLocalTime();
+                        mediaFile.FootballProgrammeId = newFootballProgramme.Id;
+
+                        DatabaseContext.Add(mediaFile);
+                        await DatabaseContext.SaveChangesAsync();
+                    }
+                    
+                }
+
                 return RedirectToAction(nameof(Index), new { Area = "", Controller = "Home" });
             }
             return View(footballProgramme);
@@ -99,6 +131,20 @@ namespace FootballProgrammes.Controllers
             if (ModelState.IsValid)
             {
                 var newTicket = await FootballProgrammeService.AddTicket(ticket);
+
+                var file = HttpContext.Request.Form.Files.FirstOrDefault();
+                if (file != null)
+                {
+                    var mediaFile = new MediaFile();
+                    mediaFile.Data = file.OpenReadStream().ReadFully();
+                    mediaFile.ContentType = file.ContentType;
+                    mediaFile.DateAdded = DateTime.Now.ToLocalTime();
+                    mediaFile.TicketId = newTicket.Id;
+
+                    DatabaseContext.Add(mediaFile);
+                    await DatabaseContext.SaveChangesAsync();
+                }
+
                 return RedirectToAction(nameof(Index), new { Area = "", Controller = "Home" });
             }
 
@@ -300,6 +346,63 @@ namespace FootballProgrammes.Controllers
                 {
                     await FootballProgrammeService.SellTicket(ticket);
                     return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+            return NotFound();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> FootballProgrammeDetails(int id)
+        {
+            var footballProgramme = await FootballProgrammeService.GetFootballProgrammeById(id);
+            if (footballProgramme != null)
+            {
+                var currentUserId = User.Identity.GetUserId();
+                if (currentUserId == footballProgramme.UserId)
+                {
+                    return View(footballProgramme);
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+            return NotFound();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> BookDetails(int id)
+        {
+            var book = await FootballProgrammeService.GetBookById(id);
+            if (book != null)
+            {
+                var currentUserId = User.Identity.GetUserId();
+                if (currentUserId == book.UserId)
+                {
+                    return View(book);
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+            return NotFound();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> TicketDetails(int id)
+        {
+            var ticket = await FootballProgrammeService.GetTicketById(id);
+            if (ticket != null)
+            {
+                var currentUserId = User.Identity.GetUserId();
+                if (currentUserId == ticket.UserId)
+                {
+                    return View(ticket);
                 }
                 else
                 {

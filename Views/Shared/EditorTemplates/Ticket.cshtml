@@ -63,3 +63,13 @@
         <input class="form-check-input" asp-for="Womens" /> @Html.DisplayNameFor(model => model.Womens)
     </label>
 </div>
+
+<label for="file">Upload Images</label>
+<div class="col-sm-12 col-md-12 mb-3 ">
+    <input type="file"
+           id="file"
+           name="file"
+           accept="image/png, image/jpeg, image/gif"
+           class="form-control"
+           multiple>
+</div>

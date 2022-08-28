@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FootballProgrammes.Models.AwayClub>
+﻿@model IEnumerable<FootballProgrammes.Models.MediaFile>
 
 @{
     ViewData["Title"] = "Index";
@@ -10,6 +10,7 @@
     <a asp-action="Create">Create New</a>
 </p>
 
+
 <div class="container">
     <div class="row">
         <div class=col-12>
@@ -17,8 +18,9 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Name</th>
-                        <th>International?</th>
+                        <th>Linked File Type</th>
+                        <th>Linked File Id</th>
+                        <th>Date Added?</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -27,10 +29,18 @@
                     {
                         <tr>
                             <td>@item.Id</td>
-                            <td>@item.Name</td>
-                            <td>@(item.International == true ? "Yes" : "No")</td>
                             <td>
-                                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                @(item.BookId == null ? "" : "Book")
+                                @(item.FootballProgrammeId == null ? "" : "Football Programme")
+                                @(item.TicketId == null ? "" : "Ticket")
+                            </td>
+                            <td>
+                                @(item.BookId == null ? "" : $"{item.BookId}")
+                                @(item.FootballProgrammeId == null ? "" : $"{item.FootballProgrammeId}")
+                                @(item.TicketId == null ? "" : $"{item.TicketId}")
+                            </td>
+                            <td>@item.DateAdded.ToString("dd MMM yyyy")</td>
+                            <td>
                                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                             </td>
@@ -41,3 +51,4 @@
         </div>
     </div>
 </div>
+

@@ -1,5 +1,6 @@
 ﻿using FootballProgrammes.Data;
 using FootballProgrammes.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
@@ -31,7 +32,9 @@ namespace FootballProgrammes.Services
         Task<Ticket>AddTicket(Ticket ticket);
         Task<FootballProgramme>AddFootballProgramme(FootballProgramme footballProgramme);
 
-
+        Task<IEnumerable<MediaFile>> GetMediaFilesByFootballProgrammeId(int id);
+        Task<IEnumerable<MediaFile>> GetMediaFilesByBookId(int id);
+        Task<IEnumerable<MediaFile>> GetMediaFilesByTicketId(int id);
     }
 
     public class FootballProgrammeService : IFootballProgrammeService
@@ -173,9 +176,40 @@ namespace FootballProgrammes.Services
         public async Task<FootballProgramme> AddFootballProgramme(FootballProgramme footballProgramme)
         {
             footballProgramme.DateAdded = DateTime.UtcNow.ToLocalTime();
+            footballProgramme.Name = $"{footballProgramme.HomeClub} vs {footballProgramme.AwayClub}";
             DatabaseContext.Add(footballProgramme);
             await DatabaseContext.SaveChangesAsync();
             return footballProgramme;
+        }
+
+        public async Task<IEnumerable<MediaFile>> GetMediaFilesByFootballProgrammeId(int id)
+        {
+            var footballProgramme = await GetFootballProgrammeById(id);
+            var files = await DatabaseContext.MediaFiles
+                .AsNoTracking()
+                .Where(e=>e.FootballProgrammeId == footballProgramme.Id)
+                .ToListAsync();
+            return files;
+        }
+
+        public async Task<IEnumerable<MediaFile>> GetMediaFilesByBookId(int id)
+        {
+            var book = await GetBookById(id);
+            var files = await DatabaseContext.MediaFiles
+                .AsNoTracking()
+                .Where(e => e.BookId == book.Id)
+                .ToListAsync();
+            return files;
+        }
+
+        public async Task<IEnumerable<MediaFile>> GetMediaFilesByTicketId(int id)
+        {
+            var ticket = await GetTicketById(id);
+            var files = await DatabaseContext.MediaFiles
+                .AsNoTracking()
+                .Where(e => e.TicketId == ticket.Id)
+                .ToListAsync();
+            return files;
         }
     }
 }

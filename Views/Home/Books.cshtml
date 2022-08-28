@@ -11,6 +11,7 @@
                 <tr>
                     <th>Title</th>
                     <th>Author</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -19,6 +20,10 @@
                     <tr>
                         <td>@item.Name</td>
                         <td>@item.Author</td>
+                            <td>
+                                <a asp-action="BookDetails" asp-route-id="@item.Id">Details</a> |
+                                <a asp-action="DeleteBook" asp-route-id="@item.Id">Delete</a>
+                            </td>
                     </tr>
                 }
             </tbody>

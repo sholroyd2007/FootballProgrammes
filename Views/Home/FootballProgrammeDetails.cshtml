@@ -1,0 +1,35 @@
+﻿@model FootballProgramme
+@{
+    ViewData["Title"] = "Football Programme Details";
+    var mediaFiles = await FootballProgrammeService.GetMediaFilesByFootballProgrammeId(Model.Id);
+}
+
+<div class="row mt-4">
+    <div class=col-12>
+        <h3>@Model.HomeClub.Name vs @Model.AwayClub.Name</h3>
+        <p>Year: @Model.Year</p> 
+        <p>Country: @Model.Country</p> 
+        <p>Quality: @Model.Quality</p> 
+        <p>For Sale: @Model.ForSale</p> 
+        @if (Model.ForSale)
+        {
+            <p>Price: @Model.Price</p> 
+            <p>Sold: @Model.Sold</p> 
+        }
+        @if (Model.Sold)
+        {
+            <p>Date Sold: @Model.DateSold?.ToLocalTime().ToString("dd MMM yyyy")</p> 
+        }
+        <p>Date Added: @Model.DateAdded.ToLocalTime().ToString("dd MMM yyyy")</p> 
+        <p>Description: @Model.Description</p>
+    </div>
+</div>
+<div class="row">
+    @foreach (var file in mediaFiles)
+    {
+        <div class="col-4">
+        <img class="img-fluid" src="data:@file.ContentType; base64, @Convert.ToBase64String(file.Data)" alt="Document" />
+    </div>
+    }
+    
+</div>
