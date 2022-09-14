@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityUser>
+@{
+    ViewData["Title"] = "Public Index";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="table">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                   {
+                       <tr>
+                           <td><a asp-action="Profile" asp-controller="Public" asp-route-id="@item.Id">@item.UserName</a></td>
+                       </tr>
+                   }
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
