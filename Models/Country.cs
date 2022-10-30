@@ -1,5 +1,8 @@
-﻿namespace FootballProgrammes.Models
+﻿using System.Text.Json.Serialization;
+
+namespace FootballProgrammes.Models
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum Country
     {
         England,

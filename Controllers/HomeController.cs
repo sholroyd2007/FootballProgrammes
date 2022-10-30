@@ -14,6 +14,10 @@ using System.Text;
 using ClosedXML.Excel;
 using System.IO;
 using Microsoft.AspNetCore.Authorization;
+using System.Net.Http;
+using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http.Json;
+using AutoMapper;
 
 namespace FootballProgrammes.Controllers
 {
@@ -23,18 +27,29 @@ namespace FootballProgrammes.Controllers
 
         public ApplicationDbContext DatabaseContext { get; }
         public IFootballProgrammeService FootballProgrammeService { get; }
+        public IMapper Mapper { get; }
 
         public HomeController(ILogger<HomeController> logger,
             ApplicationDbContext databaseContext,
-            IFootballProgrammeService footballProgrammeService)
+            IFootballProgrammeService footballProgrammeService,
+            IMapper mapper)
         {
             _logger = logger;
             DatabaseContext = databaseContext;
             FootballProgrammeService = footballProgrammeService;
+            Mapper = mapper;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            //var services = new ServiceCollection();
+            //services.AddHttpClient();
+            //var serviceProvider = services.BuildServiceProvider();
+
+            //var client = serviceProvider.GetService<HttpClient>();
+            //var response = await client.GetFromJsonAsync<ServiceResponse<IEnumerable<FootballProgramme>>>("https://localhost:44324/api/GetAllProgrammes");
+            //var programmes = response.Data.Select(e => Mapper.Map<FootballProgramme>(e)).ToList();
+
             return View();
         }
 
@@ -115,7 +130,7 @@ namespace FootballProgrammes.Controllers
                         DatabaseContext.Add(mediaFile);
                         await DatabaseContext.SaveChangesAsync();
                     }
-                    
+
                 }
 
                 return RedirectToAction(nameof(Index), new { Area = "", Controller = "Home" });
@@ -197,7 +212,7 @@ namespace FootballProgrammes.Controllers
         public async Task<IActionResult> ExportUserCollectionToExcel()
         {
             var userId = User.Identity.GetUserId();
-            var userName = User.Identity.GetUserName(); 
+            var userName = User.Identity.GetUserName();
             using (var workbook = new XLWorkbook())
             {
                 var worksheet = workbook.Worksheets.Add("Programmes");
@@ -299,10 +314,10 @@ namespace FootballProgrammes.Controllers
         public async Task<IActionResult> SellFootballProgramme(int id)
         {
             var programme = await FootballProgrammeService.GetFootballProgrammeById(id);
-            if(programme != null)
+            if (programme != null)
             {
                 var currentUserId = User.Identity.GetUserId();
-                if(currentUserId == programme.UserId)
+                if (currentUserId == programme.UserId)
                 {
                     await FootballProgrammeService.SellFootballProgramme(programme);
                     return RedirectToAction(nameof(Index));
